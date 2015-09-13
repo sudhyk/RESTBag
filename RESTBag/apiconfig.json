@@ -1,0 +1,47 @@
+{
+    "globalConfigs" : {
+        "allowinvalidcertificates" : true,
+        "proxy" : {
+            "username" : "",
+            "password" : ""
+        },
+        "requestimeout" : "60",
+        "baseURL" : "http://localhost:8080/RESTServer/JonDoe/"
+    },
+    "mobileinitialize": {
+        "url": "v1/mobileinitialize",
+        "method": "GET",
+        "type": "application/json"
+    },
+    "postservice": {
+        "url": "v1/postservice",
+        "method": "POST",
+        "type": "application/json"
+    },
+    "getjondoe" : {
+        "url": "getjondoe",
+        "method": "GET",
+        "type": "application/json"
+    },
+    "postjondoe" : {
+        "url": "postjondoe",
+        "method": "POST",
+        "type": "application/json"
+    },
+    "updatejondoe" : {
+        "url": "updatejondoe",
+        "method": "PUT",
+        "type": "application/json"
+    },
+    "deletejondoe" : {
+        "url": "deletejondoe",
+        "method": "DELETE",
+        "type": "application/json"
+    },
+    "test" : {
+        "url": "http://ip.jsontest.com/",
+        "expliciturl" : true,
+        "method": "GET",
+        "type": "application/json"
+    }
+}
