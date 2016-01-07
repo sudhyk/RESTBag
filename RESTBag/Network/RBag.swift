@@ -16,7 +16,7 @@ public class RBag: NSObject {
         super.init()
     }
     
-    public func makeAPIRequest(#apiservice: String, requestDictionary: NSDictionary?, completionblock:ServiceCompletion){
+    public func makeAPIRequest(apiservice apiservice: String, requestDictionary: NSDictionary?, completionblock:ServiceCompletion){
 
         if let request = self.constructRequest(service: apiservice, requestDictionary: requestDictionary) {
         
@@ -30,12 +30,12 @@ public class RBag: NSObject {
         }
     }
     
-    func constructRequest(#service: String, requestDictionary: NSDictionary?) -> NSURLRequest? {
+    func constructRequest(service service: String, requestDictionary: NSDictionary?) -> NSURLRequest? {
         
         if let serviceInfo = ServiceConfiguration.sharedInstance.serviceInfoDictionary(service) as NSDictionary? {
             var endpoint: String!
             
-            if let explicitURL = serviceInfo.objectForKey(CoreConstants.ServiceDataConstants.kisExplicitURL) as? Bool {
+            if let _ = serviceInfo.objectForKey(CoreConstants.ServiceDataConstants.kisExplicitURL) as? Bool {
                 endpoint = serviceInfo.objectForKey(CoreConstants.ServiceDataConstants.kURLKey) as! String
             } else {
                 // End Point Base URL
@@ -45,18 +45,24 @@ public class RBag: NSObject {
             }
 
             // End Point Request Object with Full URL Extracted
-            var request = NSMutableURLRequest(URL: NSURL(string: endpoint)!)
+            let request = NSMutableURLRequest(URL: NSURL(string: endpoint)!)
             // End Point Request Object set HTTPMethod
             if let networkmethod = serviceInfo.objectForKey(CoreConstants.ServiceDataConstants.kMethodKey) as? String {
                 request.HTTPMethod = networkmethod
             }
             var jsonError: NSError?
             // End Point Request Type
-            request.addValue(serviceInfo.objectForKey(CoreConstants.ServiceDataConstants.kType) as? String, forHTTPHeaderField: "Content-Type")
+            request.addValue((serviceInfo.objectForKey(CoreConstants.ServiceDataConstants.kType) as? String)!, forHTTPHeaderField: "Content-Type")
             
             // End Point Request Object set HTTPBody
             if let requestData = requestDictionary {
-                var byteData = NSJSONSerialization.dataWithJSONObject(requestData, options: nil, error: &jsonError)
+                var byteData: NSData?
+                do {
+                    byteData = try NSJSONSerialization.dataWithJSONObject(requestData, options: [])
+                } catch let error as NSError {
+                    jsonError = error
+                    byteData = nil
+                }
                 if jsonError == nil {
                     request.HTTPBody = byteData
                 }
@@ -85,8 +91,8 @@ class ServiceConfiguration:NSObject {
     }
 
     private override init() {
+        super.init()
         
-        var jsonError: NSError?
         var filePath: NSURL?
         // prioritize from main bundle
         if let priorityAPIConfigJSON = NSBundle.mainBundle().URLForResource("apiconfig", withExtension: "json") {
@@ -94,19 +100,19 @@ class ServiceConfiguration:NSObject {
         } else {
             filePath = NSBundle(forClass: ServiceConfiguration.self).URLForResource("apiconfig", withExtension:"json")
         }
-        if let jsonData = NSData(contentsOfURL: filePath!, options: NSDataReadingOptions.DataReadingMappedIfSafe, error: nil) {
-            self.servicesData = NSJSONSerialization.JSONObjectWithData(jsonData, options: nil, error: &jsonError) as? NSDictionary
+        
+        if let jsonData = try? NSData(contentsOfURL: filePath!, options: NSDataReadingOptions.DataReadingMappedIfSafe) {
+            self.servicesData = try? NSJSONSerialization.JSONObjectWithData(jsonData, options: []) as! [String:AnyObject]
+
         self.globalConfig = self.servicesData.objectForKey(CoreConstants.ServiceDataConstants.kGlobalConfigsKey) as? NSDictionary
         }
-        super.init()
     }
     
     func serviceInfoDictionary(serviceName:String) -> NSDictionary? {
-        
-        if let serviceInfo = self.servicesData.objectForKey(serviceName) as? NSDictionary {
-            return serviceInfo
+        guard let serviceInfo = self.servicesData.objectForKey(serviceName) as? NSDictionary else {
+            return nil
         }
-        return nil
+        return serviceInfo
     }
     
 }

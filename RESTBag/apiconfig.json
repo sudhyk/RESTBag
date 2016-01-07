@@ -39,7 +39,7 @@
         "type": "application/json"
     },
     "test" : {
-        "url": "http://ip.jsontest.com/",
+        "url": "http://jsonplaceholder.typicode.com/posts/1",
         "expliciturl" : true,
         "method": "GET",
         "type": "application/json"

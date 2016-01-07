@@ -10,9 +10,8 @@ import Foundation
 
 class SKNetworkPerformer: NSObject {
     
-    var concurrentqueue: NSOperationQueue!
-    var serialqueue: NSOperationQueue!
-    
+    let concurrentqueue: NSOperationQueue
+    let serialqueue: NSOperationQueue
     
     class var sharedInstance: SKNetworkPerformer {
         struct Static {
@@ -26,26 +25,26 @@ class SKNetworkPerformer: NSObject {
     }
     
     override init() {
-        self.concurrentqueue = NSOperationQueue()
-        self.concurrentqueue.maxConcurrentOperationCount = CoreConstants.maximumconcurrentoperations
+        concurrentqueue = NSOperationQueue()
+        concurrentqueue.maxConcurrentOperationCount = CoreConstants.maximumconcurrentoperations
         
-        self.serialqueue = NSOperationQueue()
-        self.serialqueue.maxConcurrentOperationCount = 1
+        serialqueue = NSOperationQueue()
+        serialqueue.maxConcurrentOperationCount = 1
         
         super.init()
     }
     
     func perform(operation: SKNetworkOperation) {
-        self.concurrentqueue.addOperation(operation)
+        concurrentqueue.addOperation(operation)
     }
     
     func processserialtask(operation: SKNetworkOperation) {
-        self.serialqueue.addOperation(operation)
+        serialqueue.addOperation(operation)
     }
     
     func cancelAllOperations() {
-        self.concurrentqueue.cancelAllOperations()
-        self.serialqueue.cancelAllOperations()
+        concurrentqueue.cancelAllOperations()
+        serialqueue.cancelAllOperations()
     }
     
 }

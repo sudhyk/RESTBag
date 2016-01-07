@@ -20,8 +20,6 @@ enum ServiceError {
         case .kServiceRequestConstructionError:
             return 5003
         }
-
-        
     }
 }
 
@@ -40,7 +38,6 @@ enum ServiceMethodType {
             return "PUT"
         }
     }
-    
 }
 
 struct CoreConstants {

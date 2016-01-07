@@ -25,11 +25,11 @@ class RESTBagTests: XCTestCase {
         weak var expectation:XCTestExpectation?
         expectation = expectationWithDescription("Get Test")
         var errorObj: NSError?
-        var restObj = RBag()
+        let restObj = RBag()
 
         restObj.makeAPIRequest(apiservice: "test", requestDictionary: nil) { (response, error) -> () in
             errorObj = error
-            print(response)
+            print(response, terminator: "")
             expectation?.fulfill()
         }
         waitForExpectationsWithTimeout(2, handler: nil)
